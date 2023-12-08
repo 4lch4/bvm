@@ -1,7 +1,7 @@
 {
   "name": "@4lch4/bvm",
   "displayName": "bvm",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A small CLI tool to manage multiple versions of Bun.",
   "keywords": [
     "4lch4"
