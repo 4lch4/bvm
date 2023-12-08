@@ -1,0 +1,48 @@
+{
+  "compilerOptions": {
+    // Add Bun type definitions.
+    "types": ["bun-types"],
+
+    // Enable latest features.
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": ["ESNext"],
+
+    // For TS 5.x+
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "moduleDetection": "force",
+    "experimentalDecorators": true,
+
+    "outDir": "dist",
+    "rootDir": "src",
+    "removeComments": false,
+
+    "baseUrl": "./src",
+    "paths": {
+      "~/*": ["*"]
+    },
+
+    "skipLibCheck": true,
+    "jsx": "react-jsx",
+    "downlevelIteration": true,
+    "allowJs": true,
+
+    "strict": true,
+    "strictNullChecks": true,
+
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+
+    "allowSyntheticDefaultImports": true,
+
+    "forceConsistentCasingInFileNames": true,
+    "pretty": true
+  }
+}
