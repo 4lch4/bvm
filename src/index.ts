@@ -84,13 +84,6 @@ async function setup(): Promise<Command> {
           const { stderr, success, stdout } = Bun.spawnSync({ cmd: ['install-bun', version] })
 
           if (stderr) console.error(`Error: ${stderr}`)
-
-          if (stdout) console.log(`Output: ${stdout}`)
-
-          if (success) {
-            console.log(`Success = ${success}; Version = ${version}`)
-          }
-          console.log(`Switched to Bun ${version}.`)
         }
       })
   } else {
