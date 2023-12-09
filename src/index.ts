@@ -3,6 +3,7 @@
 import { readPackageJSON } from '@4lch4/backpack/utils'
 import Chalk from 'chalk'
 import { Argument, Command, program } from 'commander'
+import ora from 'ora'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 import { getLatestVersions } from './gh'
@@ -40,35 +41,37 @@ function parseVersion(version?: string) {
   return version
 }
 
+async function listVersions() {
+  const spinner = ora().start('Getting latest versions...')
+
+  const rawVersions = await getLatestVersions()
+  const versions: string[] = []
+
+  for (let x = 0; x < rawVersions.length; x++) {
+    const version = rawVersions[x]
+
+    if (version.startsWith('v0') && rawVersions[x - 1].startsWith('v1')) versions.push('--------')
+
+    versions.push(`- ${Chalk.bold(version)}`)
+  }
+
+  spinner.stop()
+
+  console.log(versions.join('\n'))
+}
+
 async function setup(): Promise<Command> {
-  // const __dirname = dirname(fileURLToPath(import.meta.url))
   const pkgDir = join(dirname(fileURLToPath(import.meta.url)), '..')
   const pkg = await readPackageJSON(join(pkgDir, 'package.json'))
 
   if (pkg && pkg.name && pkg.version && pkg.description) {
-    const versionArg = new Argument('[version]', 'The version of Bun to switch to.')
-      // Try and parse the version number argument into something like bun-v1.0.0.
-      .argParser(parseVersion)
+    const versionArg = new Argument('[version]', 'The version of Bun to switch to.').argParser(
+      parseVersion,
+    )
 
     const listCommand = new Command('list')
       .description('List the released versions of Bun.')
-      .action(async () => {
-        console.log('Listing versions...')
-
-        const rawVersions = await getLatestVersions()
-        const versions: string[] = []
-
-        for (let x = 0; x < rawVersions.length; x++) {
-          const version = rawVersions[x]
-
-          if (version.startsWith('v0') && rawVersions[x - 1].startsWith('v1'))
-            versions.push('--------')
-
-          versions.push(`- ${Chalk.bold(version)}`)
-        }
-
-        console.log(versions.join('\n'))
-      })
+      .action(listVersions)
 
     return program
       .name(pkg.name)
@@ -78,9 +81,16 @@ async function setup(): Promise<Command> {
       .addCommand(listCommand)
       .action(async (version?: string) => {
         if (version) {
-          const { stderr } = Bun.spawn({ cmd: ['install-bun', version] })
+          const { stderr, success, stdout } = Bun.spawnSync({ cmd: ['install-bun', version] })
 
           if (stderr) console.error(`Error: ${stderr}`)
+
+          if (stdout) console.log(`Output: ${stdout}`)
+
+          if (success) {
+            console.log(`Success = ${success}; Version = ${version}`)
+          }
+          console.log(`Switched to Bun ${version}.`)
         }
       })
   } else {
