@@ -76,12 +76,12 @@ async function setup(): Promise<Command> {
       .description(pkg.description)
       .addArgument(versionArg)
       .addCommand(listCommand)
-      .action(async (version: string) => {
-        const { stderr } = Bun.spawn({ cmd: ['install-bun', version] })
+      .action(async (version?: string) => {
+        if (version) {
+          const { stderr } = Bun.spawn({ cmd: ['install-bun', version] })
 
-        if (stderr) console.error(`Error: ${stderr}`)
-        // if (stdout) console.log(`[index]: ${stdout}`)
-        // console.log(`[index]: versionArg: ${version}`)
+          if (stderr) console.error(`Error: ${stderr}`)
+        }
       })
   } else {
     const errMsg = 'package.json was not able to be read.'
