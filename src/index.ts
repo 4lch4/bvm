@@ -7,18 +7,34 @@ import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 import { getLatestVersions } from './gh'
 
-function parseVersion(version: string) {
+/**
+ * Parses the given version number, if it exists, into a format that can be used by the
+ * `install-bun` script provided by Bun. The following is how each type of version number is
+ * parsed:
+ *
+ * - bun-v#.#.#: Returns the version number as-is.
+ * - v#.#.#: Converts it to bun-v#.#.#.
+ * - #.#.#: Converts it to bun-v#.#.#.
+ * - #.#: Converts it to bun-v1.#.#.
+ * - latest: Returns undefined.
+ *
+ * @param version The version number to parse.
+ * @returns The version number to use for the install command.
+ */
+function parseVersion(version?: string) {
   // If it's already in the expected format of bun-v#.#.#, return it.
-  if (version.match(/^bun-v\d+\.\d+\.\d+$/)) return version
+  if (version?.match(/^bun-v\d+\.\d+\.\d+$/)) return version
 
   // If it's in the format of v#.#.#, convert it to bun-v#.#.#.
-  if (version.match(/^v\d+\.\d+\.\d+$/)) return `bun-${version}`
+  if (version?.match(/^v\d+\.\d+\.\d+$/)) return `bun-${version}`
 
   // If it's in the format of #.#.#, convert it to bun-v#.#.#.
-  if (version.match(/^\d+\.\d+\.\d+$/)) return `bun-v${version}`
+  if (version?.match(/^\d+\.\d+\.\d+$/)) return `bun-v${version}`
 
   // If it's in the format of #.#, convert it to bun-v1.#.#.
-  if (version.match(/^\d+\.\d+$/)) return `bun-v1.${version}`
+  if (version?.match(/^\d+\.\d+$/)) return `bun-v1.${version}`
+
+  if (version?.toLowerCase() === 'latest') return undefined
 
   // Otherwise, return the version as-is.
   return version
